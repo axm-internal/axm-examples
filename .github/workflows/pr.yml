@@ -4,19 +4,30 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  packages: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
     steps:
       - uses: actions/checkout@v6
-      - uses: oven-sh/setup-bun@v2
-      - name: Configure npm for GitHub Packages
+      - name: Configure GitHub Packages auth
         run: |
-          echo "@axm-internal:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "@axm-internal:registry=https://npm.pkg.github.com/" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+      - name: Debug GitHub Packages auth (temporary)
+        run: |
+          echo "---- ~/.npmrc (token lines masked in logs) ----"
+          sed -n '1,200p' ~/.npmrc || true
+          echo "npm scoped registry:"
+          npm config get @axm-internal:registry || true
+          echo "Checking package endpoint HTTP status (will not print token):"
+          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          status=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOKEN" "https://npm.pkg.github.com/download/@axm-internal/zod-helpers/0.1.0")
+          echo "HTTP status checking download URL: $status"
+      - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun run verify:readme-versions
       - run: bun run validate

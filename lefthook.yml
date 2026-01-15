@@ -11,9 +11,13 @@ pre-commit:
       skip:
         - merge
         - rebase
+pre-push:
+  parallel: true
+  commands:
+    verify-readme-versions:
+      run: bun run verify:readme-versions
 commit-msg:
   parallel: true
   commands:
     commitlint:
       run: bunx commitlint --edit $1
-

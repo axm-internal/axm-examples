@@ -6,12 +6,17 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - name: Configure GitHub Packages auth
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+          echo "always-auth=true" >> .npmrc
       - uses: oven-sh/setup-bun@v2
       - run: bun install
       - run: bun run verify:readme-versions

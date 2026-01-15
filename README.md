@@ -4,10 +4,12 @@ Example usage and smoke tests for published `@axm-internal/*` packages.
 
 ## Setup
 
-Create a local `.npmrc` with a GitHub token that has `read:packages`:
+GitHub Packages requires authentication to install packages (even if the package is public).
+
+This repo includes a `.npmrc` with the scoped registry mapping. You only need to add a token locally.
+Create or update your user-level `~/.npmrc` with a GitHub token that has `read:packages`:
 
 ```text
-@axm-internal:registry=https://npm.pkg.github.com
 //npm.pkg.github.com/:_authToken=YOUR_TOKEN
 ```
 
@@ -32,3 +34,7 @@ bun test
 ```bash
 bun run test:coverage
 ```
+
+## CI Notes
+
+If CI fails to install packages from GitHub Packages, see `CI-PACKAGES-INCIDENT.md` for the root cause and fix details.

@@ -1,0 +1,23 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      run: bun run lint
+      skip:
+        - merge
+        - rebase
+    types:
+      run: bun run check-types
+      skip:
+        - merge
+        - rebase
+pre-push:
+  parallel: true
+  commands:
+    verify-readme-versions:
+      run: bun run verify:readme-versions
+commit-msg:
+  parallel: true
+  commands:
+    commitlint:
+      run: bunx commitlint --edit {1}
